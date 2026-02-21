@@ -7,631 +7,707 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script type="text/javascript" src="https://unpkg.com/parse/dist/parse.min.js"></script>
     <style>
-        /* Small custom */
+        /* Custom tweaks */
+        .hero-blob {
+            filter: drop-shadow(0 20px 50px rgba(59,130,246,0.12));
+            transform-origin: center;
+            transition: transform .5s ease;
+        }
+        .card-hover:hover .hero-blob { transform: rotate(-6deg) scale(1.02); }
         .glass {
-            background: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.6);
             backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
         }
         [data-theme="dark"] .glass {
-            background: rgba(10,10,10,0.45);
+            background: rgba(17,24,39,0.55);
         }
-        .fade-up {
-            transform: translateY(12px);
-            opacity: 0;
-            transition: all .6s cubic-bezier(.2,.8,.2,1);
-        }
-        .fade-up.in {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        .nav-item { cursor: pointer; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-base-100 to-base-200 min-h-screen antialiased text-base-content">
+<body class="bg-gradient-to-br from-base-100 to-base-200 min-h-screen flex flex-col">
+
     <!-- NAVBAR -->
-    <header class="sticky top-0 z-40">
-        <nav class="w-full px-4 md:px-8 lg:px-16 py-3 bg-gradient-to-r from-primary to-secondary shadow-lg">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="avatar">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-accent to-primary flex items-center justify-center text-white shadow-lg transform hover:scale-105 transition-all">
-                            <i class="fa-solid fa-globe fa-lg"></i>
-                        </div>
-                    </div>
-                    <div>
-                        <a class="font-bold text-white text-lg md:text-2xl flex items-baseline gap-2" href="#" data-page="home" id="brandBtn">
-                            <span>DevSphere</span>
-                            <span class="badge badge-sm badge-accent ml-1">Open • Free</span>
-                        </a>
-                        <p class="text-xs text-white/80 hidden md:block">Colaboração · Aprendizado · Open-source</p>
-                    </div>
-                </div>
-
-                <div class="hidden md:flex items-center gap-4">
-                    <ul class="menu menu-horizontal px-1 text-white">
-                        <li><a class="nav-link text-sm" data-page="home"><i class="fa-solid fa-house-chimney mr-2"></i>Home</a></li>
-                        <li><a class="nav-link text-sm" data-page="features"><i class="fa-solid fa-list-check mr-2"></i>Funcionalidades</a></li>
-                        <li><a class="nav-link text-sm" data-page="projects"><i class="fa-solid fa-diagram-project mr-2"></i>Projetos</a></li>
-                        <li><a class="nav-link text-sm" data-page="mentoria"><i class="fa-solid fa-hands-helping mr-2"></i>Mentoria</a></li>
-                        <li><a class="nav-link text-sm" data-page="hackathons"><i class="fa-solid fa-rocket-launch mr-2"></i>Hackathons</a></li>
-                        <li><a class="nav-link text-sm" data-page="recursos"><i class="fa-solid fa-book-open-reader mr-2"></i>Recursos</a></li>
-                        <li><a class="nav-link text-sm" data-page="contato"><i class="fa-solid fa-envelope mr-2"></i>Contato</a></li>
-                    </ul>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <button id="themeToggle" class="btn btn-ghost btn-sm text-white"><i class="fa-solid fa-moon"></i></button>
-                    <button id="openSignup" class="btn btn-primary btn-sm text-white"><i class="fa-solid fa-user-plus mr-2"></i>Entrar / Criar Conta</button>
-
-                    <div class="dropdown dropdown-end md:hidden">
-                        <label tabindex="0" class="btn btn-ghost btn-square text-white"><i class="fa-solid fa-bars"></i></label>
-                        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><a class="nav-link" data-page="home">Home</a></li>
-                            <li><a class="nav-link" data-page="features">Funcionalidades</a></li>
-                            <li><a class="nav-link" data-page="projects">Projetos</a></li>
-                            <li><a class="nav-link" data-page="mentoria">Mentoria</a></li>
-                            <li><a class="nav-link" data-page="hackathons">Hackathons</a></li>
-                            <li><a class="nav-link" data-page="recursos">Recursos</a></li>
-                            <li><a class="nav-link" data-page="contato">Contato</a></li>
-                        </ul>
-                    </div>
-                </div>
+    <header class="w-full sticky top-0 z-40">
+        <nav class="navbar bg-transparent px-4 md:px-8 lg:px-16">
+            <div class="flex-1">
+                <a class="btn btn-ghost normal-case text-xl md:text-2xl lg:text-3xl font-bold text-primary inline-flex items-center gap-3" onclick="navigate('home')">
+                    <span class="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">DevSphere</span>
+                    <i class="fa-solid fa-sphere text-secondary"></i>
+                </a>
+            </div>
+            <div class="flex-none lg:hidden">
+                <button id="mobile-toggle" class="btn btn-ghost" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+            <div id="nav-items" class="hidden lg:flex gap-2">
+                <ul class="menu menu-horizontal p-0 gap-1">
+                    <li><a class="nav-item" onclick="navigate('home')">Início</a></li>
+                    <li><a class="nav-item" onclick="navigate('projetos')">Projetos</a></li>
+                    <li><a class="nav-item" onclick="navigate('foruns')">Fóruns</a></li>
+                    <li><a class="nav-item" onclick="navigate('mentoria')">Mentoria</a></li>
+                    <li><a class="nav-item" onclick="navigate('hackathons')">Hackathons</a></li>
+                    <li><a class="nav-item" onclick="navigate('recursos')">Recursos</a></li>
+                    <li><a class="nav-item" onclick="navigate('perfil')">Perfil</a></li>
+                    <li><a class="nav-item" onclick="navigate('suporte')">Apoiar</a></li>
+                </ul>
+            </div>
+            <div class="flex-none gap-2 hidden md:flex items-center">
+                <button id="theme-toggle" class="btn btn-ghost tooltip tooltip-bottom" data-tip="Alternar tema" aria-label="Alternar tema">
+                    <i class="fa-regular fa-sun text-warning text-lg"></i>
+                </button>
+                <button class="btn btn-primary" onclick="navigate('perfil')">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Entrar / Criar Perfil
+                </button>
             </div>
         </nav>
+
+        <!-- Mobile drawer -->
+        <div id="mobile-drawer" class="w-full bg-gradient-to-r from-primary to-secondary text-white p-4 hidden lg:hidden">
+            <ul class="menu menu-compact">
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('home')">Início</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('projetos')">Projetos</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('foruns')">Fóruns</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('mentoria')">Mentoria</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('hackathons')">Hackathons</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('recursos')">Recursos</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('perfil')">Perfil</a></li>
+                <li><a class="nav-item" onclick="toggleMobile(); navigate('suporte')">Apoiar</a></li>
+            </ul>
+        </div>
     </header>
 
-    <!-- MAIN CONTENT (will be swapped by JS) -->
-    <main id="mainContent" class="max-w-7xl mx-auto px-4 md:px-8 lg:px-16 py-10">
-        <!-- HERO (default Home content injected by script as well to allow swapping) -->
+    <!-- MAIN CONTENT -->
+    <main id="app" class="flex-1 w-full">
+        <!-- Content will be injected here by JS -->
     </main>
 
     <!-- FOOTER -->
-    <footer class="mt-12 border-t border-base-300">
-        <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <div class="flex items-center gap-3">
-                    <div class="w-14 h-14 rounded-full bg-gradient-to-r from-accent to-primary flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-code-branch fa-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">DevSphere</h3>
-                        <p class="text-sm text-muted">Uma rede colaborativa e gratuita para desenvolvedores.</p>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <p class="text-sm">Doações voluntárias • Parcerias éticas • Crowdfunding comunitário</p>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <h4 class="font-semibold mb-2">Plataforma</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a class="link link-hover" data-page="features">Funcionalidades</a></li>
-                        <li><a class="link link-hover" data-page="projects">Projetos</a></li>
-                        <li><a class="link link-hover" data-page="recursos">Recursos</a></li>
-                    </ul>
+    <footer class="footer p-10 bg-base-300 text-base-content">
+        <div>
+            <div class="flex items-center gap-3">
+                <div class="rounded-full h-12 w-12 flex items-center justify-center bg-gradient-to-r from-accent to-primary text-white text-xl shadow-lg">
+                    <i class="fa-solid fa-code-branch"></i>
                 </div>
                 <div>
-                    <h4 class="font-semibold mb-2">Comunidade</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a class="link link-hover" data-page="mentoria">Mentoria</a></li>
-                        <li><a class="link link-hover" data-page="hackathons">Hackathons</a></li>
-                        <li><a class="link link-hover" data-page="contato">Contato</a></li>
-                    </ul>
+                    <p class="font-bold text-lg">DevSphere</p>
+                    <p class="text-sm opacity-80">Rede colaborativa, 100% gratuita e open-source</p>
                 </div>
             </div>
-            <div>
-                <h4 class="font-semibold mb-2">Siga-nos</h4>
-                <div class="flex items-center gap-3 mb-3">
-                    <a class="btn btn-square btn-ghost" aria-label="github" href="#"><i class="fa-brands fa-github"></i></a>
-                    <a class="btn btn-square btn-ghost" aria-label="twitter" href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a class="btn btn-square btn-ghost" aria-label="discord" href="#"><i class="fa-brands fa-discord"></i></a>
-                    <a class="btn btn-square btn-ghost" aria-label="youtube" href="#"><i class="fa-brands fa-youtube"></i></a>
-                </div>
-                <p class="text-xs text-muted">© <span id="footerYear"></span> DevSphere. Plataforma gratuita — sem anúncios, sem assinaturas.</p>
+            <p class="mt-4 text-xs opacity-70">Construído por e para desenvolvedores • Sem anúncios • Doações voluntárias</p>
+        </div>
+        <div>
+            <span class="footer-title">Plataforma</span>
+            <a class="link link-hover nav-item" onclick="navigate('projetos')">Projetos</a>
+            <a class="link link-hover nav-item" onclick="navigate('foruns')">Fóruns</a>
+            <a class="link link-hover nav-item" onclick="navigate('mentoria')">Mentoria</a>
+        </div>
+        <div>
+            <span class="footer-title">Comunidade</span>
+            <a class="link link-hover nav-item" onclick="navigate('hackathons')">Hackathons</a>
+            <a class="link link-hover nav-item" onclick="navigate('recursos')">Recursos</a>
+            <a class="link link-hover nav-item" onclick="navigate('suporte')">Apoiar</a>
+        </div>
+        <div>
+            <span class="footer-title">Siga</span>
+            <div class="flex gap-3">
+                <a class="btn btn-square btn-ghost" href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                <a class="btn btn-square btn-ghost" href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a class="btn btn-square btn-ghost" href="#" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
             </div>
+            <p class="text-xs opacity-60 mt-4">© <span id="year"></span> DevSphere. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <!-- Signup Modal (inline, toggled) -->
-    <div id="signupModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/40" id="signupBackdrop"></div>
-        <div class="relative max-w-3xl w-full bg-base-100 rounded-xl shadow-2xl overflow-hidden glass">
-            <div class="grid grid-cols-1 md:grid-cols-2">
-                <div class="p-8 bg-gradient-to-r from-primary to-secondary text-white">
-                    <h3 class="text-2xl md:text-3xl font-bold">Junte-se à DevSphere</h3>
-                    <p class="mt-2 text-sm md:text-base text-white/90">Crie sua conta gratuitamente, contribua para projetos open-source, participe de sprints e hackathons.</p>
-                    <div class="mt-6 space-y-3">
-                        <div class="badge badge-lg badge-accent">Sem anúncios</div>
-                        <div class="badge badge-lg badge-secondary">Totalmente gratuita</div>
-                        <div class="badge badge-lg badge-success">Comunidade inclusiva</div>
-                    </div>
-                    <div class="mt-6">
-                        <button id="modalCloseTop" class="btn btn-ghost btn-sm text-white"><i class="fa-solid fa-arrow-left mr-2"></i>Voltar</button>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <form id="signupForm" class="space-y-4">
-                        <div>
-                            <label class="label"><span class="label-text">Nome</span></label>
-                            <input required type="text" id="name" class="input input-bordered w-full focus:input-primary" placeholder="Seu nome completo / nickname">
-                        </div>
-                        <div>
-                            <label class="label"><span class="label-text">Email</span></label>
-                            <input required type="email" id="email" class="input input-bordered w-full focus:input-primary" placeholder="email@exemplo.com">
-                        </div>
-                        <div>
-                            <label class="label"><span class="label-text">Bio curta</span></label>
-                            <input type="text" id="bio" class="input input-bordered w-full" placeholder="Full-stack | Python | Open Source">
-                        </div>
-                        <div>
-                            <label class="label"><span class="label-text">Principais skills (separe por vírgula)</span></label>
-                            <input type="text" id="skills" class="input input-bordered w-full" placeholder="javascript,react,python">
-                        </div>
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="form-control">
-                                <label class="label cursor-pointer">
-                                    <input type="checkbox" id="mentor" class="checkbox checkbox-primary mr-2">
-                                    <span class="label-text">Disponível para mentoria</span>
-                                </label>
-                            </div>
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check mr-2"></i>Gravar</button>
-                            </div>
-                        </div>
-                        <p class="text-xs text-muted">Seus dados serão salvos no Realtime Database (Firebase) e registrados no Back4App para fins de sincronização da comunidade.</p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Parse SDK for Back4App -->
+    <script type="text/javascript" src="https://unpkg.com/parse/dist/parse.min.js"></script>
 
-    <!-- Toasts / Alerts -->
-    <div id="toastContainer" class="fixed bottom-6 right-6 space-y-3 z-50"></div>
-
-    <!-- Scripts -->
+    <!-- App Script -->
     <script>
-        // Initialization: Parse (Back4App)
-        Parse.initialize("9ZcO8UyWa6YeydcMgqcyZ0bRW64zbNAPxfzFqALF", "xSBua4iOGNbYc80jQB3mxBA4WdtHwWc8pm2JnxC6");
+        // Configs
+        const RTDB_URL = "https://booksdev-3de79-default-rtdb.firebaseio.com/";
+        const PARSE_APP_ID = "3VHbajRu1XmG9nyEyuovKyhWwSn42W15cg5HAB5x";
+        const PARSE_JS_KEY = "A1LS4r3G87EGrtMw8z0qB5rD9dllBJl6YBWAMDg0";
+
+        // Initialize Parse (Back4App)
+        Parse.initialize(PARSE_APP_ID, PARSE_JS_KEY);
         Parse.serverURL = 'https://parseapi.back4app.com/';
 
-        // Firebase Realtime base URL
-        const FIREBASE_BASE = 'https://booksdev-3de79-default-rtdb.firebaseio.com';
+        // DOM Helpers
+        const app = document.getElementById('app');
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-        // Utility: toast
-        function toast(message, type='info') {
-            const colors = {
-                info: 'bg-base-200 text-base-content',
-                success: 'bg-green-500 text-white',
-                error: 'bg-red-500 text-white'
-            };
-            const el = document.createElement('div');
-            el.className = `toast ${colors[type]} shadow-lg px-4 py-3 rounded-md`;
-            el.innerHTML = `<div class="flex items-center gap-3"><div class="flex-1">${message}</div><button class="btn btn-ghost btn-sm">OK</button></div>`;
-            el.querySelector('button').addEventListener('click', ()=> el.remove());
-            document.getElementById('toastContainer').appendChild(el);
-            setTimeout(()=> { el.remove(); }, 7000);
-        }
+        // Mobile toggle
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        mobileToggle.addEventListener('click', toggleMobile);
+        function toggleMobile() { mobileDrawer.classList.toggle('hidden'); }
 
         // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        themeToggle.addEventListener('click', () => {
+        const themeBtn = document.getElementById('theme-toggle');
+        themeBtn.addEventListener('click', () => {
             const html = document.documentElement;
-            const cur = html.getAttribute('data-theme') || 'light';
-            const next = cur === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', next);
-            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            const current = html.getAttribute('data-theme') || 'light';
+            html.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+            // update icon
+            themeBtn.innerHTML = html.getAttribute('data-theme') === 'dark' ? '<i class="fa-regular fa-moon text-info text-lg"></i>' : '<i class="fa-regular fa-sun text-warning text-lg"></i>';
         });
 
-        // Modal controls
-        const signupModal = document.getElementById('signupModal');
-        const openSignupBtn = document.getElementById('openSignup');
-        const modalCloseTop = document.getElementById('modalCloseTop');
-        const signupBackdrop = document.getElementById('signupBackdrop');
-
-        function openModal() {
-            signupModal.classList.remove('hidden');
-            signupModal.classList.add('flex');
-        }
-        function closeModal() {
-            signupModal.classList.remove('flex');
-            signupModal.classList.add('hidden');
-            document.getElementById('signupForm').reset();
-        }
-        openSignupBtn.addEventListener('click', openModal);
-        modalCloseTop.addEventListener('click', closeModal);
-        signupBackdrop.addEventListener('click', closeModal);
-
-        // Signup form submit -> save to Firebase RTDB and Back4App
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const bio = document.getElementById('bio').value.trim();
-            const skillsStr = document.getElementById('skills').value.trim();
-            const mentor = document.getElementById('mentor').checked;
-            if (!name || !email) {
-                toast('Por favor preencha nome e email.', 'error');
-                return;
-            }
-            const skills = skillsStr ? skillsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
-
-            const payload = {
-                name, email, bio, skills, mentor, createdAt: new Date().toISOString()
+        // Navigation logic: single page, swaps HTML content
+        function navigate(page) {
+            const pages = {
+                home: renderHome,
+                projetos: renderProjetos,
+                foruns: renderForuns,
+                mentoria: renderMentoria,
+                hackathons: renderHackathons,
+                recursos: renderRecursos,
+                perfil: renderPerfil,
+                suporte: renderSuporte
             };
+            const fn = pages[page] || renderHome;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            fn();
+        }
 
-            try {
-                // Firebase RTDB (PUT with uid)
-                const uid = 'u_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
-                const url = `${FIREBASE_BASE}/users/${uid}.json`;
-                await fetch(url, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-
-                // Back4App (Parse)
-                const DevUser = Parse.Object.extend("DevSphereUser");
-                const devUser = new DevUser();
-                devUser.set("name", name);
-                devUser.set("email", email);
-                devUser.set("bio", bio);
-                devUser.set("skills", skills);
-                devUser.set("mentor", mentor);
-                devUser.set("externalUid", uid);
-                await devUser.save();
-
-                toast('Usuário salvo com sucesso na DevSphere!', 'success');
-                closeModal();
-            } catch (err) {
-                console.error(err);
-                toast('Erro ao salvar usuário. Tente novamente.', 'error');
-            }
-        });
-
-        // Page contents as templates (mobile-first, responsive)
-        const templates = {
-            home: `
-                <section class="rounded-xl overflow-hidden shadow-2xl bg-gradient-to-r from-accent to-primary text-white p-6 md:p-12 lg:p-20">
-                    <div class="md:flex md:items-center md:justify-between gap-8">
-                        <div class="md:flex-1">
-                            <h1 class="text-4xl md:text-6xl font-bold leading-tight">DevSphere — A Rede Social Colaborativa para Desenvolvedores</h1>
-                            <p class="mt-4 text-base md:text-lg text-white/90 max-w-2xl">Crie, colabore e aprenda. Projetos open-source, sprints colaborativas, mentoria peer-to-peer e hackathons — 100% gratuito e sem anúncios.</p>
+        // Utility: card container
+        function heroSection() {
+            return `
+            <section class="relative overflow-hidden">
+                <div class="bg-gradient-to-r from-primary to-secondary px-6 py-12 md:py-20 lg:py-28">
+                    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div class="text-white">
+                            <div class="badge badge-outline badge-lg mb-4 bg-white/10 border-white/20">Colaboração • Aprendizado • Open-source</div>
+                            <h1 class="text-4xl md:text-6xl lg:text-6xl font-bold leading-tight drop-shadow-lg">DevSphere — A rede colaborativa para desenvolvedores</h1>
+                            <p class="mt-4 md:mt-6 text-lg md:text-xl opacity-90 max-w-2xl">Crie, colabore e cresça com projetos open-source, mentoria peer-to-peer, hackathons e recursos comunitários — 100% gratuito e sem anúncios.</p>
                             <div class="mt-6 flex flex-col sm:flex-row gap-3">
-                                <button class="btn btn-primary btn-lg" id="ctaJoin"><i class="fa-solid fa-handshake mr-2"></i>Comece a colaborar — Grátis</button>
-                                <a class="btn btn-ghost btn-lg text-white/90" href="#" id="ctaLearn"><i class="fa-solid fa-circle-info mr-2"></i>Saiba Mais</a>
+                                <button class="btn btn-lg btn-primary shadow-lg" onclick="navigate('projetos')">
+                                    <i class="fa-solid fa-rocket mr-2"></i> Explorar Projetos
+                                </button>
+                                <button class="btn btn-outline btn-lg text-white" onclick="navigate('perfil')">
+                                    <i class="fa-solid fa-user-plus mr-2"></i> Criar Perfil
+                                </button>
                             </div>
-                            <div class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
-                                <div class="stat glass p-4 rounded-lg">
-                                    <div class="stat-title text-white/80">Membros</div>
-                                    <div class="stat-value text-white text-2xl">+12.4k</div>
-                                    <div class="stat-desc text-white/70">Crescendo diariamente</div>
+                            <div class="mt-6 flex gap-4">
+                                <div class="stat glass px-4 py-3 rounded-lg">
+                                    <div class="stat-title text-xs text-white/80">Projetos ativos</div>
+                                    <div class="stat-value text-white text-2xl">+1.2k</div>
                                 </div>
-                                <div class="stat glass p-4 rounded-lg">
-                                    <div class="stat-title text-white/80">Projetos</div>
-                                    <div class="stat-value text-white text-2xl">+3.2k</div>
-                                    <div class="stat-desc text-white/70">Open-source ativos</div>
+                                <div class="stat glass px-4 py-3 rounded-lg">
+                                    <div class="stat-title text-xs text-white/80">Mentores</div>
+                                    <div class="stat-value text-white text-2xl">+800</div>
                                 </div>
-                                <div class="stat glass p-4 rounded-lg">
-                                    <div class="stat-title text-white/80">Hackathons</div>
-                                    <div class="stat-value text-white text-2xl">28</div>
-                                    <div class="stat-desc text-white/70">Últimos 12 meses</div>
+                                <div class="stat glass px-4 py-3 rounded-lg">
+                                    <div class="stat-title text-xs text-white/80">Hackathons</div>
+                                    <div class="stat-value text-white text-2xl">+120</div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mt-8 md:mt-0 md:w-1/3">
-                            <div class="mockup-code bg-white text-black rounded-lg shadow-xl overflow-hidden">
-                                <div class="px-4 py-6">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-md bg-primary flex items-center justify-center text-white"><i class="fa-solid fa-code"></i></div>
-                                        <div>
-                                            <div class="text-sm font-semibold">Projeto: OpenAI-Chat-Plugin</div>
-                                            <div class="text-xs text-muted">Sprint: Integração de auth · Responsável: @maria</div>
-                                        </div>
-                                    </div>
-                                    <pre class="mt-4 text-sm"><code>// Participe do sprint
-git clone https://github.com/devsphere/example
-git checkout -b feat/sprint-progress
-</code></pre>
-                                    <div class="mt-4 flex gap-2">
-                                        <button class="btn btn-outline btn-sm">Ver Projeto</button>
-                                        <button class="btn btn-primary btn-sm" id="ctaJoinSprint">Participar do Sprint</button>
+                        <div class="flex items-center justify-center md:justify-end relative">
+                            <div class="relative w-72 h-72 md:w-96 md:h-96 card-hover">
+                                <svg class="hero-blob w-full h-full" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="g1" x1="0" x2="1">
+                                            <stop offset="0%" stop-color="#34D399"/>
+                                            <stop offset="100%" stop-color="#3B82F6"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <g transform="translate(300,300)">
+                                        <path d="M120,-150C158,-116,188,-79,203,-33C218,13,218,68,192,111C166,153,114,184,65,194C16,204,-29,193,-76,176C-123,158,-172,134,-189,96C-205,58,-189,6,-177,-46C-166,-98,-159,-150,-124,-179C-89,-209,-44,-216,1,-217C46,-219,91,-216,120,-150Z" fill="url(#g1)"/>
+                                    </g>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="mockup-code bg-white/90 dark:bg-base-200 rounded-lg p-6 shadow-xl w-64 md:w-80">
+                                        <pre class="text-xs md:text-sm"><code>// Contribua com código<br>function hello() {<br>  console.log('Olá, DevSphere!')<br>}</code></pre>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
+            `;
+        }
 
-                <section class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    ${featureCard('Espaço de Projetos', 'Crie e participe de projetos open-source com painel de progresso visual.', 'fa-diagram-project')}
-                    ${featureCard('Fóruns Temáticos', 'Discussões por tecnologia e gamificação para incentivar boas contribuições.', 'fa-comments')}
-                    ${featureCard('Mentoria Peer-to-Peer', 'Conecte-se com mentores e aprendizes automaticamente.', 'fa-hands-helping')}
-                    ${featureCard('Hackathons Virtuais', 'Competições regulares com projetos públicos e colaborativos.', 'fa-rocket-launch')}
-                    ${featureCard('Biblioteca de Recursos', 'Tutoriais, artigos e vídeos avaliados pela comunidade.', 'fa-book-open')}
-                    ${featureCard('Reconhecimento & Networking', 'Perfis, recomendações e badges por contribuições.', 'fa-award')}
-                </section>
+        function featuresSection() {
+            return `
+            <section class="py-12 md:py-16 px-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl md:text-4xl font-bold text-primary">Funcionalidades que impulsionam colaboração</h2>
+                        <p class="mt-2 text-sm md:text-base opacity-80">Ferramentas pensadas para reunir desenvolvedores, aprendizado e projetos de impacto.</p>
+                    </div>
 
-                <section class="mt-10">
-                    <div class="rounded-xl p-6 bg-gradient-to-r from-primary to-secondary text-white shadow-lg">
-                        <div class="md:flex md:items-center md:justify-between">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="card card-hover glass p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center gap-4">
+                                <div class="rounded-md w-12 h-12 flex items-center justify-center bg-primary text-white text-xl">
+                                    <i class="fa-solid fa-sitemap"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Projetos Colaborativos</h3>
+                                    <p class="text-sm opacity-80">Crie sprints, painéis de progresso e atribua tarefas em tempo real para equipes open-source.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="badge badge-accent">Sprints</span>
+                                <span class="badge badge-secondary">Painéis</span>
+                                <span class="badge">Open-source</span>
+                            </div>
+                        </div>
+
+                        <div class="card card-hover glass p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center gap-4">
+                                <div class="rounded-md w-12 h-12 flex items-center justify-center bg-secondary text-white text-xl">
+                                    <i class="fa-solid fa-comments"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Fóruns Temáticos</h3>
+                                    <p class="text-sm opacity-80">Canalize conhecimento por tecnologia, com gamificação que recompensa contribuições úteis.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="badge badge-outline">Tags</span>
+                                <span class="badge badge-primary">Recompensas</span>
+                            </div>
+                        </div>
+
+                        <div class="card card-hover glass p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center gap-4">
+                                <div class="rounded-md w-12 h-12 flex items-center justify-center bg-accent text-white text-xl">
+                                    <i class="fa-solid fa-user-friends"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Mentoria Peer-to-Peer</h3>
+                                    <p class="text-sm opacity-80">Conexões inteligentes entre mentores e aprendizes, com feedback e sessões programadas.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="badge badge-success">Match</span>
+                                <span class="badge">Feedback</span>
+                            </div>
+                        </div>
+
+                        <div class="card card-hover glass p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center gap-4">
+                                <div class="rounded-md w-12 h-12 flex items-center justify-center bg-primary text-white text-xl">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Hackathons Virtuais</h3>
+                                    <p class="text-sm opacity-80">Eventos colaborativos com desafios reais publicados pela comunidade e empresas parceiras.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="badge badge-accent">Prêmios</span>
+                                <span class="badge">Open-source</span>
+                            </div>
+                        </div>
+
+                        <div class="card card-hover glass p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center gap-4">
+                                <div class="rounded-md w-12 h-12 flex items-center justify-center bg-secondary text-white text-xl">
+                                    <i class="fa-solid fa-book"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Biblioteca Colaborativa</h3>
+                                    <p class="text-sm opacity-80">Tutoriais, guias e vídeos avaliados pela comunidade para destacar conteúdo de qualidade.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="badge">Curadoria</span>
+                                <span class="badge badge-primary">Avaliações</span>
+                            </div>
+                        </div>
+
+                        <div class="card card-hover glass p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center gap-4">
+                                <div class="rounded-md w-12 h-12 flex items-center justify-center bg-accent text-white text-xl">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-lg">Ética & Inclusão</h3>
+                                    <p class="text-sm opacity-80">Espaços dedicados para discussões sobre diversidade, ética no código e impacto social.</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex items-center gap-3">
+                                <span class="badge badge-secondary">Workshops</span>
+                                <span class="badge">Debates</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            `;
+        }
+
+        function pricingSection() {
+            return `
+            <section class="py-12 px-6">
+                <div class="max-w-7xl mx-auto text-center mb-8">
+                    <h2 class="text-2xl md:text-4xl font-bold text-primary">Gratuito para todos — Sustentabilidade transparente</h2>
+                    <p class="mt-2 text-sm md:text-base opacity-80">A plataforma é 100% gratuita. Se desejar, apoie com doações voluntárias para manter a comunidade viva.</p>
+                </div>
+
+                <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                        <div class="badge badge-outline">Plataforma</div>
+                        <h3 class="text-xl font-semibold mt-4">Gratuito</h3>
+                        <p class="mt-2 text-sm opacity-80">Acesso completo a projetos, fóruns, mentoria e hackathons. Sem anúncios, sem assinatura.</p>
+                        <ul class="mt-4 text-sm space-y-2">
+                            <li><i class="fa-solid fa-check text-success mr-2"></i> Projetos ilimitados</li>
+                            <li><i class="fa-solid fa-check text-success mr-2"></i> Participação em hackathons</li>
+                            <li><i class="fa-solid fa-check text-success mr-2"></i> Mentoria peer-to-peer</li>
+                        </ul>
+                        <div class="mt-6">
+                            <button class="btn btn-primary w-full">Começar Gratuitamente</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 shadow-xl border-2 border-primary transform scale-105">
+                        <div class="badge badge-primary">Recomendado</div>
+                        <h3 class="text-2xl font-bold mt-4">Apoiar (Doação)</h3>
+                        <p class="mt-2 text-sm opacity-80">Doações voluntárias ajudam a cobrir custos e financiar eventos — você decide quando e quanto doar.</p>
+                        <ul class="mt-4 text-sm space-y-2">
+                            <li><i class="fa-solid fa-hand-holding-heart text-secondary mr-2"></i> Transparência financeira</li>
+                            <li><i class="fa-solid fa-people-roof text-secondary mr-2"></i> Patrocínio de hackathons</li>
+                        </ul>
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <button class="btn btn-accent" onclick="donate(5)">R$5</button>
+                            <button class="btn btn-secondary" onclick="donate(15)">R$15</button>
+                            <button class="btn btn-success" onclick="donate(50)">R$50</button>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 shadow-lg transform transition-all duration-300 hover:scale-105">
+                        <div class="badge badge-outline">Parceiros</div>
+                        <h3 class="text-xl font-semibold mt-4">Patrocínios</h3>
+                        <p class="mt-2 text-sm opacity-80">Empresas podem patrocinar eventos sem impactar a experiência do usuário com anúncios.</p>
+                        <ul class="mt-4 text-sm space-y-2">
+                            <li><i class="fa-solid fa-handshake text-info mr-2"></i> Eventos patrocinados</li>
+                            <li><i class="fa-solid fa-bullhorn text-info mr-2"></i> Oportunidades de recrutamento</li>
+                        </ul>
+                        <div class="mt-6">
+                            <button class="btn btn-outline w-full" onclick="navigate('suporte')">Saiba Mais</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            `;
+        }
+
+        function footerCTA() {
+            return `
+            <section class="py-10 px-6 bg-gradient-to-r from-accent to-primary text-white">
+                <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                        <h3 class="text-2xl md:text-3xl font-bold">Pronto para colaborar em projetos que importam?</h3>
+                        <p class="mt-2 opacity-90">Crie seu perfil e comece a contribuir na DevSphere agora mesmo.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="btn btn-neutral" onclick="navigate('perfil')">Criar Perfil</button>
+                        <button class="btn btn-outline" onclick="navigate('projetos')">Explorar Projetos</button>
+                    </div>
+                </div>
+            </section>
+            `;
+        }
+
+        // Page renderers
+        function renderHome() {
+            app.innerHTML = `
+                ${heroSection()}
+                ${featuresSection()}
+                ${pricingSection()}
+                ${footerCTA()}
+            `;
+        }
+
+        function renderProjetos() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="flex flex-col md:flex-row items-start justify-between gap-6 mb-8">
                             <div>
-                                <h3 class="text-2xl font-bold">Sempre gratuito — Sem assinaturas</h3>
-                                <p class="mt-2 text-white/90">Nossa missão é manter a DevSphere acessível. Você terá acesso completo a todas as funcionalidades sem custos.</p>
+                                <h2 class="text-2xl md:text-4xl font-bold text-primary">Projetos Colaborativos</h2>
+                                <p class="mt-2 opacity-80">Encontre projetos por linguagem, dificuldade e categoria. Participe de sprints, assuma tarefas e colabore em equipes.</p>
                             </div>
-                            <div class="mt-4 md:mt-0">
-                                <button class="btn btn-accent" id="ctaDonate"><i class="fa-solid fa-hand-holding-heart mr-2"></i>Doar (Opcional)</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="mt-8">
-                    <h3 class="text-xl font-bold mb-4">Planos (Transparente)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="card border hover:scale-105 transition-all transform">
-                            <div class="card-body">
-                                <h4 class="card-title">Gratuito</h4>
-                                <p class="text-muted">Acesso completo às funcionalidades principais.</p>
-                                <div class="mt-4 space-y-2">
-                                    <div class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Projetos open-source</div>
-                                    <div class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Mentoria peer-to-peer</div>
-                                    <div class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Hackathons e eventos</div>
-                                </div>
-                                <div class="card-actions justify-end mt-4">
-                                    <button class="btn btn-outline" id="getFreeBtn">Começar — Gratuitamente</button>
-                                </div>
+                            <div class="flex gap-3">
+                                <select id="filter-lang" class="select select-bordered">
+                                    <option value="">Todas linguagens</option>
+                                    <option>JavaScript</option>
+                                    <option>Python</option>
+                                    <option>Rust</option>
+                                    <option>Go</option>
+                                </select>
+                                <button class="btn btn-primary" onclick="openNewProject()">Novo Projeto</button>
                             </div>
                         </div>
 
-                        <div class="card border-2 border-primary transform scale-105 shadow-2xl" aria-hidden>
-                            <div class="card-body">
-                                <h4 class="card-title">Comunitário (Patrocinado)</h4>
-                                <p class="text-muted">Recursos patrocinados por parceiros para eventos específicos.</p>
-                                <div class="mt-4 space-y-2">
-                                    <div class="flex items-center gap-2"><i class="fa-solid fa-star text-yellow-400"></i> Patrocínios de Hackathons</div>
-                                    <div class="flex items-center gap-2"><i class="fa-solid fa-users-line text-purple-400"></i> Workshops patrocinados</div>
-                                </div>
-                                <div class="card-actions justify-end mt-4">
-                                    <button class="btn btn-primary">Saber Mais</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card border hover:scale-105 transition-all transform">
-                            <div class="card-body">
-                                <h4 class="card-title">Parceiros</h4>
-                                <p class="text-muted">Visibilidade para empresas que apoiam a comunidade.</p>
-                                <div class="mt-4">
-                                    <div class="badge badge-outline">Eventos</div>
-                                    <div class="badge badge-outline ml-2">Patrocínios</div>
-                                </div>
-                                <div class="card-actions justify-end mt-4">
-                                    <button class="btn btn-ghost">Contato Comercial</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-
-            features: `
-                <section class="rounded-lg p-6 bg-base-100 shadow-xl">
-                    <h2 class="text-2xl md:text-3xl font-bold">Funcionalidades Principais</h2>
-                    <p class="text-sm text-muted mt-2">Tudo pensado para facilitar colaboração e aprendizado contínuo.</p>
-
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${featureDetail('Espaço de Projetos Colaborativos', 'Classifique por linguagem, dificuldade e participe de sprints com painéis de progresso visuais.', 'fa-diagram-project')}
-                        ${featureDetail('Fóruns Temáticos', 'Threads organizadas por tecnologia, com sistema de badges para contribuições úteis.', 'fa-comments')}
-                        ${featureDetail('Mentoria Peer-to-Peer', 'Conexão automática entre mentores e aprendizes baseada em skills.', 'fa-hands-helping')}
-                        ${featureDetail('Hackathons Virtuais', 'Eventos regulares com todos os projetos abertos e disponíveis para aprendizado.', 'fa-rocket-launch')}
-                        ${featureDetail('Biblioteca Colaborativa', 'Recursos avaliados pela comunidade com sistema de tags e curadoria.', 'fa-book-open')}
-                        ${featureDetail('Ética & Inclusão', 'Espaço dedicado para debates sobre ética, diversidade e sustentabilidade.', 'fa-handshake-angle')}
-                    </div>
-                </section>
-            `,
-
-            projects: `
-                <section class="rounded-lg p-6 bg-gradient-to-r from-accent to-primary text-white shadow-xl">
-                    <div class="md:flex md:items-center md:justify-between">
-                        <div>
-                            <h2 class="text-2xl md:text-3xl font-bold">Espaço de Projetos</h2>
-                            <p class="mt-2 text-white/90">Crie, gerencie e convide colaboradores para sprints e issues com fácil visibilidade de progresso.</p>
-                        </div>
-                        <div class="mt-4 md:mt-0">
-                            <button class="btn btn-success">Criar Novo Projeto</button>
+                        <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${sampleProjectCard('OpenAI Helper', 'JavaScript', 'Intermediário', 'Integrações para agilizar processos usando IA.', 12)}
+                            ${sampleProjectCard('DataViz Lib', 'Python', 'Avançado', 'Biblioteca colaborativa para visualização de dados.', 8)}
+                            ${sampleProjectCard('Game Engine Lite', 'Rust', 'Avançado', 'Motor 2D experimental com foco em performance.', 5)}
+                            ${sampleProjectCard('Infra Automations', 'Go', 'Intermediário', 'Scripts reutilizáveis para automação DevOps.', 9)}
+                            ${sampleProjectCard('Beginner Tasks', 'JavaScript', 'Iniciante', 'Projetos para novos contribuidores praticarem.', 25)}
+                            ${sampleProjectCard('AI Ethics Hub', 'Multilinguagem', 'Todos', 'Discussões e ferramentas para ética em IA.', 7)}
                         </div>
                     </div>
 
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="card glass p-4 hover:scale-105 transition-all transform">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-semibold">Projeto: AI-Toolkit</h4>
-                                    <p class="text-sm text-muted">Linguagens: Python, JS · Nível: Avançado</p>
+                    <!-- New Project Modal (hidden by default) -->
+                    <div id="new-project-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden">
+                        <div class="bg-base-100 rounded-lg p-6 w-11/12 md:w-3/4 lg:w-1/2 shadow-2xl">
+                            <h3 class="text-lg font-bold">Criar Novo Projeto</h3>
+                            <form id="project-form" class="mt-4 grid grid-cols-1 gap-3">
+                                <input id="proj-title" class="input input-bordered w-full" placeholder="Título do projeto" required />
+                                <input id="proj-lang" class="input input-bordered w-full" placeholder="Linguagem/Tech" />
+                                <select id="proj-level" class="select select-bordered w-full">
+                                    <option>Iniciante</option>
+                                    <option>Intermediário</option>
+                                    <option>Avançado</option>
+                                </select>
+                                <textarea id="proj-desc" class="textarea textarea-bordered w-full" placeholder="Descrição curta"></textarea>
+                                <div class="flex justify-end gap-2 mt-2">
+                                    <button type="button" class="btn btn-ghost" onclick="closeNewProject()">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Criar Projeto</button>
                                 </div>
-                                <div class="text-right">
-                                    <div class="radial-progress text-primary" style="--value:70">70%</div>
-                                </div>
-                            </div>
-                            <div class="divider"></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                <div class="badge badge-outline">Sprint atual: Integração</div>
-                                <div class="badge badge-outline">Issues: 12 abertas</div>
-                            </div>
-                        </div>
-
-                        <div class="card glass p-4 hover:scale-105 transition-all transform">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-semibold">Projeto: GameEngineJS</h4>
-                                    <p class="text-sm text-muted">Linguagens: TypeScript · Nível: Intermediário</p>
-                                </div>
-                                <div class="text-right">
-                                    <div class="radial-progress text-warning" style="--value:45">45%</div>
-                                </div>
-                            </div>
-                            <div class="divider"></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                <div class="badge badge-outline">Mentores: 3</div>
-                                <div class="badge badge-outline">Última atualização: 2 dias</div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </section>
-            `,
+            `;
 
-            mentoria: `
-                <section class="rounded-lg p-6 bg-base-100 shadow-xl">
-                    <h2 class="text-2xl md:text-3xl font-bold">Mentoria Peer-to-Peer</h2>
-                    <p class="text-sm text-muted mt-2">Conectamos mentores e aprendizes automaticamente com base em interesses e skills.</p>
+            // Attach form handlers
+            document.getElementById('project-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('proj-title').value.trim();
+                const lang = document.getElementById('proj-lang').value.trim();
+                const level = document.getElementById('proj-level').value;
+                const desc = document.getElementById('proj-desc').value.trim();
+                const project = {
+                    title, lang, level, desc, contributors: 1, createdAt: new Date().toISOString()
+                };
 
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="card p-4 hover:scale-105 transition-all transform">
-                            <div class="flex items-center gap-3">
-                                <div class="avatar">
-                                    <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center">M</div>
-                                </div>
-                                <div>
-                                    <div class="font-semibold">Mariana • Full-stack</div>
-                                    <div class="text-sm text-muted">Mentoria: React, Node</div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button class="btn btn-outline btn-sm">Pedir Mentoria</button>
-                            </div>
-                        </div>
+                // Save to Firebase Realtime Database (simple push)
+                try {
+                    const key = 'projects/' + Date.now();
+                    await fetch(RTDB_URL + key + '.json', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(project)
+                    });
+                } catch (err) {
+                    console.error('RTDB save error', err);
+                }
 
-                        <div class="card p-4 hover:scale-105 transition-all transform">
-                            <div class="flex items-center gap-3">
-                                <div class="avatar">
-                                    <div class="w-12 h-12 rounded-full bg-secondary text-white flex items-center justify-center">L</div>
-                                </div>
-                                <div>
-                                    <div class="font-semibold">Lucas • IA</div>
-                                    <div class="text-sm text-muted">Mentoria: ML, Data</div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button class="btn btn-outline btn-sm">Pedir Mentoria</button>
-                            </div>
-                        </div>
+                // Save to Back4App Parse
+                try {
+                    const Project = Parse.Object.extend('CommunityProject');
+                    const p = new Project();
+                    p.set('title', title);
+                    p.set('lang', lang);
+                    p.set('level', level);
+                    p.set('desc', desc);
+                    await p.save();
+                } catch (err) {
+                    console.error('Parse save error', err);
+                }
 
-                        <div class="card p-4 hover:scale-105 transition-all transform">
-                            <div class="flex items-center gap-3">
-                                <div class="avatar">
-                                    <div class="w-12 h-12 rounded-full bg-accent text-white flex items-center justify-center">R</div>
-                                </div>
-                                <div>
-                                    <div class="font-semibold">Rafaela • DevOps</div>
-                                    <div class="text-sm text-muted">Mentoria: CI/CD</div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button class="btn btn-outline btn-sm">Pedir Mentoria</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
+                closeNewProject();
+                alert('Projeto criado com sucesso!');
+                navigate('projetos');
+            });
+        }
 
-            hackathons: `
-                <section class="rounded-lg p-6 bg-gradient-to-r from-primary to-secondary text-white shadow-xl">
-                    <h2 class="text-2xl md:text-3xl font-bold">Hackathons Virtuais</h2>
-                    <p class="mt-2 text-white/90">Participe de desafios reais com equipes colaborativas — todos os projetos ficam públicos.</p>
-
-                    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="card p-4 hover:scale-105 transition-all transform">
-                            <h4 class="font-semibold">Desafio: Sustentabilidade Digital</h4>
-                            <p class="text-sm text-muted">Inscrições abertas · Equipes de até 5</p>
-                            <div class="mt-4">
-                                <button class="btn btn-accent">Inscrever Equipe</button>
-                            </div>
-                        </div>
-                        <div class="card p-4 hover:scale-105 transition-all transform">
-                            <h4 class="font-semibold">Desafio: Automação Educacional</h4>
-                            <p class="text-sm text-muted">Prêmios simbólicos · Visibilidade comunitária</p>
-                            <div class="mt-4">
-                                <button class="btn btn-accent">Ver Regras</button>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-
-            recursos: `
-                <section class="rounded-lg p-6 bg-base-100 shadow-xl">
-                    <h2 class="text-2xl md:text-3xl font-bold">Biblioteca de Recursos</h2>
-                    <p class="mt-2 text-muted">Tutoriais, artigos e vídeos organizados por tags e avaliados pela comunidade.</p>
-
-                    <div class="mt-6">
-                        <div class="carousel carousel-center space-x-4 rounded-box">
-                            <div class="carousel-item">
-                                <div class="card p-4 w-72 hover:scale-105 transition-all transform">
-                                    <h4 class="font-semibold">Guia React Moderno</h4>
-                                    <p class="text-sm text-muted">Atualizado · 2025</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <div class="card p-4 w-72 hover:scale-105 transition-all transform">
-                                    <h4 class="font-semibold">Deploy com GitHub Actions</h4>
-                                    <p class="text-sm text-muted">CI/CD · Exemplo prático</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <div class="card p-4 w-72 hover:scale-105 transition-all transform">
-                                    <h4 class="font-semibold">Introdução ao ML</h4>
-                                    <p class="text-sm text-muted">Recursos para iniciantes</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-
-            contato: `
-                <section class="rounded-lg p-6 bg-base-100 shadow-xl">
-                    <h2 class="text-2xl md:text-3xl font-bold">Fale Conosco</h2>
-                    <p class="mt-2 text-muted">Dúvidas, parcerias ou suporte técnico — envie uma mensagem.</p>
-
-                    <form id="contactForm" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="label"><span class="label-text">Nome</span></label>
-                            <input id="contactName" type="text" class="input input-bordered w-full" placeholder="Seu nome">
-                        </div>
-                        <div>
-                            <label class="label"><span class="label-text">Email</span></label>
-                            <input id="contactEmail" type="email" class="input input-bordered w-full" placeholder="email@exemplo.com">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="label"><span class="label-text">Mensagem</span></label>
-                            <textarea id="contactMessage" class="textarea textarea-bordered w-full" rows="4" placeholder="Como podemos ajudar?"></textarea>
-                        </div>
-                        <div class="md:col-span-2 text-right">
-                            <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
-                        </div>
-                    </form>
-                </section>
-            `
-        };
-
-        // Small helpers to generate feature cards
-        function featureCard(title, desc, icon) {
+        function sampleProjectCard(title, lang, level, desc, contributors) {
             return `
-                <div class="p-5 rounded-xl bg-white shadow hover:scale-105 transition-all transform">
+                <div class="card p-4 shadow-lg transform transition-all duration-300 hover:scale-105">
+                    <div class="flex items-start gap-3">
+                        <div class="rounded-md w-12 h-12 flex items-center justify-center bg-primary text-white text-xl">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold">${title}</h4>
+                            <p class="text-sm opacity-80">${desc}</p>
+                            <div class="mt-3 flex items-center justify-between">
+                                <div class="flex gap-2 items-center">
+                                    <span class="badge">${lang}</span>
+                                    <span class="badge badge-outline">${level}</span>
+                                </div>
+                                <div class="text-xs opacity-70"><i class="fa-solid fa-users mr-1"></i>${contributors} contribs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex gap-2">
+                        <button class="btn btn-sm btn-primary" onclick="joinSampleProject('${title}')"><i class="fa-solid fa-circle-plus mr-2"></i>Entrar</button>
+                        <button class="btn btn-sm btn-ghost" onclick="viewProject('${title}')">Detalhes</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openNewProject() { document.getElementById('new-project-modal').classList.remove('hidden'); }
+        function closeNewProject() { document.getElementById('new-project-modal').classList.add('hidden'); }
+
+        function viewProject(name) { alert('Abrir página de projeto: ' + name); }
+        function joinSampleProject(name) { alert('Você entrou no projeto ' + name + '!'); }
+
+        function renderForuns() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-2xl md:text-4xl font-bold text-primary">Fóruns Temáticos</h2>
+                        <p class="mt-2 opacity-80">Escolha uma categoria e participe das discussões técnicas.</p>
+
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${forumCard('Front-end', 'Discussões sobre frameworks, CSS e componentes', 'fa-brands fa-react')}
+                            ${forumCard('Back-end', 'APIs, arquitetura e boas práticas', 'fa-solid fa-server')}
+                            ${forumCard('DevOps', 'CI/CD, infra e automação', 'fa-solid fa-cloud')}
+                            ${forumCard('Data Science', 'Modelos, pipelines e análise', 'fa-solid fa-chart-line')}
+                            ${forumCard('Segurança', 'Segurança da informação e código seguro', 'fa-solid fa-shield')}
+                            ${forumCard('Ethics & Inclusion', 'Debates e práticas inclusivas', 'fa-solid fa-handshake')}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function forumCard(title, desc, icon) {
+            return `
+                <div class="card p-5 shadow-lg transform transition-all duration-300 hover:scale-105">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-primary to-secondary text-white flex items-center justify-center">
-                            <i class="fa-solid ${icon}"></i>
+                        <div class="rounded-md w-12 h-12 flex items-center justify-center bg-secondary text-white text-xl">
+                            <i class="${icon}"></i>
                         </div>
                         <div>
                             <h4 class="font-semibold">${title}</h4>
-                            <p class="text-sm text-muted mt-1">${desc}</p>
+                            <p class="text-sm opacity-80">${desc}</p>
+                            <div class="mt-3 flex gap-2">
+                                <button class="btn btn-sm btn-primary" onclick="navigate('foruns')">Entrar</button>
+                                <button class="btn btn-sm btn-ghost">Ver threads</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMentoria() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="text-center mb-8">
+                            <h2 class="text-2xl md:text-4xl font-bold text-primary">Mentoria Peer-to-Peer</h2>
+                            <p class="mt-2 opacity-80">Conecte-se com mentores e aprendizes com base em interesses e habilidades.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${mentorCard('Mariana Oliveira', 'Full-stack', 'Mentora', 120)}
+                            ${mentorCard('Lucas Silva', 'Data Science', 'Mentor', 98)}
+                            ${mentorCard('Ana Costa', 'DevOps', 'Mentora', 76)}
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <button class="btn btn-primary" onclick="navigate('perfil')">Quero ser mentor(a)</button>
+                            <button class="btn btn-ghost ml-2" onclick="navigate('perfil')">Procurar mentor</button>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function mentorCard(name, area, role, sessions) {
+            return `
+                <div class="card p-4 shadow-lg transform transition-all duration-300 hover:scale-105">
+                    <div class="flex items-center gap-4">
+                        <div class="avatar">
+                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center text-white text-xl">
+                                ${name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold">${name}</h4>
+                            <p class="text-sm opacity-80">${area} • ${role}</p>
+                            <div class="mt-3 text-xs opacity-70"><i class="fa-solid fa-clock mr-2"></i>${sessions} sessões</div>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary">Conectar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderHackathons() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-2xl md:text-4xl font-bold text-primary">Hackathons Virtuais</h2>
+                        <p class="mt-2 opacity-80">Participe de desafios com prazos curtos e colaboração intensa.</p>
+
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${hackCard('Sustainability Hack', 'Criar soluções sustentáveis para apps', '14 dias')}
+                            ${hackCard('AI for Good', 'Projetos com impacto social usando IA', '7 dias')}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function hackCard(title, desc, duration) {
+            return `
+                <div class="card p-5 shadow-xl transform transition-all duration-300 hover:scale-105">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-md w-12 h-12 flex items-center justify-center bg-accent text-white text-xl">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold">${title}</h3>
+                            <p class="text-sm opacity-80">${desc}</p>
+                            <div class="mt-3 flex items-center justify-between">
+                                <span class="badge">${duration}</span>
+                                <div>
+                                    <button class="btn btn-sm btn-primary">Inscrever</button>
+                                    <button class="btn btn-sm btn-ghost ml-2">Ver Regras</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRecursos() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-2xl md:text-4xl font-bold text-primary">Biblioteca de Recursos</h2>
+                        <p class="mt-2 opacity-80">Tutoriais, guias e vídeos curados pela comunidade.</p>
+
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${resourceCard('Guia React Avançado', 'Artigo', 'React')}
+                            ${resourceCard('Deploy com Docker', 'Vídeo', 'DevOps')}
+                            ${resourceCard('Machine Learning 101', 'Curso', 'Data Science')}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function resourceCard(title, type, tag) {
+            return `
+                <div class="card p-5 shadow-lg transform transition-all duration-300 hover:scale-105">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-md w-12 h-12 flex items-center justify-center bg-primary text-white text-xl">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold">${title}</h4>
+                            <p class="text-sm opacity-80">${type} • ${tag}</p>
                             <div class="mt-3">
-                                <span class="badge badge-outline">Colaboração</span>
-                                <span class="badge badge-outline ml-2">Open-source</span>
+                                <button class="btn btn-sm btn-primary">Abrir</button>
+                                <button class="btn btn-sm btn-ghost ml-2">Curtir</button>
                             </div>
                         </div>
                     </div>
@@ -639,147 +715,154 @@ git checkout -b feat/sprint-progress
             `;
         }
 
-        function featureDetail(title, desc, icon) {
-            return `
-                <div class="p-6 rounded-lg bg-white shadow hover:scale-105 transition-all transform">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-lg bg-primary text-white flex items-center justify-center">
-                            <i class="fa-solid ${icon}"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">${title}</h4>
-                            <p class="text-sm text-muted mt-1">${desc}</p>
+        function renderPerfil() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="card p-6 shadow-lg">
+                                <div class="flex flex-col items-center">
+                                    <div id="avatar" class="w-28 h-28 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center text-white text-3xl">DS</div>
+                                    <h3 id="profile-name" class="mt-4 font-bold text-lg">Visitante</h3>
+                                    <p id="profile-bio" class="text-sm opacity-70 text-center mt-2">Crie seu perfil para contribuir com projetos e participar da comunidade.</p>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-2 card p-6 shadow-lg">
+                                <h3 class="font-bold text-xl">Criar / Atualizar Perfil</h3>
+                                <form id="profile-form" class="grid grid-cols-1 gap-3 mt-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <input id="name" class="input input-bordered w-full" placeholder="Nome completo" required />
+                                        <input id="username" class="input input-bordered w-full" placeholder="Usuário (ex: @dev)" required />
+                                    </div>
+                                    <textarea id="bio" class="textarea textarea-bordered w-full" placeholder="Bio curta, skills e interesses"></textarea>
+                                    <input id="skills" class="input input-bordered w-full" placeholder="Skills (comma separated)" />
+                                    <div class="flex gap-2">
+                                        <input id="publicProfile" type="checkbox" class="checkbox checkbox-primary" checked />
+                                        <label class="label-text">Perfil público</label>
+                                    </div>
+                                    <div class="flex justify-end gap-2 mt-2">
+                                        <button type="button" class="btn btn-ghost" onclick="loadSampleProfile()">Preencher Exemplo</button>
+                                        <button type="submit" class="btn btn-primary">Salvar Perfil</button>
+                                    </div>
+                                </form>
+
+                                <div id="save-status" class="mt-4 text-sm opacity-80"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+            `;
+
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const username = document.getElementById('username').value.trim();
+                const bio = document.getElementById('bio').value.trim();
+                const skills = document.getElementById('skills').value.split(',').map(s => s.trim()).filter(Boolean);
+                const isPublic = document.getElementById('publicProfile').checked;
+                const uid = 'u_' + (username || name || Date.now()).replace(/\s+/g, '_').toLowerCase() + '_' + Date.now();
+
+                const profile = {
+                    uid, name, username, bio, skills, isPublic, createdAt: new Date().toISOString()
+                };
+
+                // Save to Firebase Realtime Database
+                try {
+                    await fetch(RTDB_URL + 'users/' + uid + '.json', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(profile)
+                    });
+                } catch (err) {
+                    console.error('RTDB error', err);
+                    document.getElementById('save-status').textContent = 'Erro ao salvar no Firebase.';
+                }
+
+                // Save to Back4App (Parse)
+                try {
+                    const UserProfile = Parse.Object.extend('UserProfile');
+                    const user = new UserProfile();
+                    user.set('uid', uid);
+                    user.set('name', name);
+                    user.set('username', username);
+                    user.set('bio', bio);
+                    user.set('skills', skills);
+                    user.set('isPublic', isPublic);
+                    await user.save();
+                } catch (err) {
+                    console.error('Parse error', err);
+                    document.getElementById('save-status').textContent = 'Erro ao salvar no Back4App.';
+                }
+
+                // Update UI
+                document.getElementById('avatar').textContent = (name || 'DS').split(' ').map(n=>n[0]).slice(0,2).join('');
+                document.getElementById('profile-name').textContent = name || 'Visitante';
+                document.getElementById('profile-bio').textContent = bio || 'Perfil salvo.';
+                document.getElementById('save-status').textContent = 'Perfil salvo com sucesso!';
+
+            });
+        }
+
+        function loadSampleProfile() {
+            document.getElementById('name').value = 'João Desenvolvedor';
+            document.getElementById('username').value = 'joaodev';
+            document.getElementById('bio').value = 'Full-stack apaixonado por open-source. Gosto de mentoria e arquitetura de sistemas.';
+            document.getElementById('skills').value = 'JavaScript,Node.js,React,DevOps';
+        }
+
+        function renderSuporte() {
+            app.innerHTML = `
+                <section class="py-12 px-6">
+                    <div class="max-w-4xl mx-auto text-center">
+                        <h2 class="text-2xl md:text-4xl font-bold text-primary">Apoie a DevSphere</h2>
+                        <p class="mt-2 opacity-80">A plataforma permanece gratuita — apoios são voluntários para manter infraestrutura e eventos.</p>
+
+                        <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="card p-6 shadow-lg">
+                                <h3 class="font-semibold">Apoio Mensal</h3>
+                                <p class="mt-2 opacity-80">Contribua mensalmente para financiar hackathons.</p>
+                                <div class="mt-4">
+                                    <button class="btn btn-primary w-full" onclick="donate(10)">Doar R$10</button>
+                                </div>
+                            </div>
+                            <div class="card p-6 shadow-xl border-2 border-primary">
+                                <h3 class="font-semibold">Doação Única</h3>
+                                <p class="mt-2 opacity-80">Suporte pontual para melhorias e novos recursos.</p>
+                                <div class="mt-4">
+                                    <button class="btn btn-secondary w-full" onclick="donate(50)">Doar R$50</button>
+                                </div>
+                            </div>
+                            <div class="card p-6 shadow-lg">
+                                <h3 class="font-semibold">Patrocínio</h3>
+                                <p class="mt-2 opacity-80">Patrocine eventos sem comprometer a neutralidade da plataforma.</p>
+                                <div class="mt-4">
+                                    <button class="btn btn-ghost w-full" onclick="contactSponsor()">Quero patrocinar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             `;
         }
 
-        // Inject initial home
-        const main = document.getElementById('mainContent');
-        function render(page) {
-            main.innerHTML = templates[page] || templates.home;
-            // add small fade-up effect
-            setTimeout(()=> {
-                main.querySelectorAll('section, .card, .stat, .mockup-code').forEach((el, i) => {
-                    el.classList.add('fade-up');
-                    setTimeout(()=> el.classList.add('in'), 80 * i);
-                });
-            }, 10);
-
-            // Attach some button handlers for new content
-            const ctaJoin = document.getElementById('ctaJoin');
-            if (ctaJoin) ctaJoin.addEventListener('click', openModal);
-            const getFreeBtn = document.getElementById('getFreeBtn');
-            if (getFreeBtn) getFreeBtn.addEventListener('click', openModal);
-            const ctaJoinSprint = document.getElementById('ctaJoinSprint');
-            if (ctaJoinSprint) ctaJoinSprint.addEventListener('click', ()=> toast('Solicitação de participação enviada!'));
-            const ctaDonate = document.getElementById('ctaDonate');
-            if (ctaDonate) ctaDonate.addEventListener('click', ()=> toast('Obrigado pelo interesse em apoiar! (opcional)','info'));
-            const ctaLearn = document.getElementById('ctaLearn');
-            if (ctaLearn) ctaLearn.addEventListener('click', ()=> { render('features'); activateNav('features'); });
-
-            // contact form handler
-            const contactForm = document.getElementById('contactForm');
-            if (contactForm) {
-                contactForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const name = document.getElementById('contactName').value.trim();
-                    const email = document.getElementById('contactEmail').value.trim();
-                    const message = document.getElementById('contactMessage').value.trim();
-                    if (!name || !email || !message) {
-                        toast('Preencha todos os campos.', 'error');
-                        return;
-                    }
-                    // Save message to Firebase and Parse simple
-                    const payload = {name,email,message,createdAt:new Date().toISOString()};
-                    try {
-                        // firebase push
-                        await fetch(\`\${FIREBASE_BASE}/messages/\${Date.now()}.json\`, {
-                            method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
-                        });
-                        const Msg = Parse.Object.extend("ContactMessage");
-                        const msgObj = new Msg();
-                        msgObj.set('name', name);
-                        msgObj.set('email', email);
-                        msgObj.set('message', message);
-                        await msgObj.save();
-                        toast('Mensagem enviada. Obrigado!', 'success');
-                        contactForm.reset();
-                    } catch (err) {
-                        console.error(err);
-                        toast('Erro ao enviar mensagem.', 'error');
-                    }
-                });
-            }
+        // Simple donation simulation
+        function donate(amount) {
+            const confirmMsg = confirm('Você está prestes a doar R$' + amount + '. Continuar?');
+            if (!confirmMsg) return;
+            alert('Obrigado! Sua doação de R$' + amount + ' foi registrada (simulação).');
         }
 
-        // Nav interactions: swap content without full page reload
-        function activateNav(page) {
-            document.querySelectorAll('.nav-link').forEach(n => {
-                n.classList.toggle('active', n.getAttribute('data-page') === page);
-            });
-            // also highlight footer links if any
-            document.querySelectorAll('[data-page]').forEach(el => {
-                if (el.dataset.page === page) {
-                    el.classList.add('text-primary');
-                } else {
-                    el.classList.remove('text-primary');
-                }
-            });
+        function contactSponsor() {
+            alert('Obrigado pelo interesse! Envie um e-mail para partnership@devsphere.org (simulação).');
         }
 
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                if (page) {
-                    render(page);
-                    activateNav(page);
-                    window.scrollTo({top:0, behavior:'smooth'});
-                }
-            });
-        });
+        // Small helpers for project interactions
+        function viewProject(name) { alert('Abrir projeto: ' + name); }
 
-        // Brand button behaves as home
-        document.getElementById('brandBtn').addEventListener('click', (e)=> { e.preventDefault(); render('home'); activateNav('home'); });
-
-        // Initial render
-        render('home');
-        activateNav('home');
-
-        // Footer year
-        document.getElementById('footerYear').textContent = new Date().getFullYear();
-
-        // Make clickable footer links change page as well
-        document.querySelectorAll('footer [data-page]').forEach(a => {
-            a.addEventListener('click', (e) => {
-                e.preventDefault();
-                const p = a.getAttribute('data-page');
-                render(p);
-                activateNav(p);
-                window.scrollTo({top:0, behavior:'smooth'});
-            });
-        });
-
-        // Accessibility: close modal on ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (!signupModal.classList.contains('hidden')) closeModal();
-            }
-        });
-
-        // Small: support clicking badges and items in-page to render "projects"
-        document.addEventListener('click', (e)=> {
-            const target = e.target.closest('[data-page]');
-            if (target) {
-                const p = target.getAttribute('data-page');
-                if (p) {
-                    render(p);
-                    activateNav(p);
-                    window.scrollTo({top:0, behavior:'smooth'});
-                }
-            }
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            navigate('home');
         });
     </script>
 </body>
